@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 
 import { useAppDispatch, useAppSelector } from "hooks";
 import { FarmsType } from "libs/type";
-import { fetchFarmList, selectFarmData } from "stores/farmSlice";
+import { fetchFarmList, selectFarmData, toggleHouse } from "stores/farmSlice";
 import FarmList from "./FarmList";
 
 function sumAnnualProduction(farm: FarmsType) {
@@ -25,6 +25,7 @@ const Farm = () => {
   */
 
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(fetchFarmList());
   }, []);
@@ -36,7 +37,7 @@ const Farm = () => {
       ...farm,
       productionTotal: sumAnnualProduction(farm),
       HouseActive: (farmId: number, houseId: number) => {
-        // TODO: house 조작 함수 추가
+        dispatch(toggleHouse({ farmId, houseId }));
       },
     }));
   }, [farmData]);

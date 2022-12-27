@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input, Button } from "components";
+import { addFarm } from "stores/farmSlice";
+import { useAppDispatch } from "hooks";
 
 const FarmAddForm = () => {
   /*TODO: Q2-2 API 통신 (Farm 의 문제를 다 끝내고 진행하셔도 무방합니다.)
@@ -15,20 +17,46 @@ const FarmAddForm = () => {
     - 각 모달에는 닫기 버튼을 추가하여 모달이 수동으로 닫혀야 합니다.
   */
 
+  const [farmName, setFarmName] = useState("");
+  const [cropName, setCropName] = useState("");
+
+  const dispatch = useAppDispatch();
+
+  const handleClick = async () => {
+    const resultAction = await dispatch(addFarm({ farmName, cropName }));
+
+    if (addFarm.fulfilled.match(resultAction)) {
+      console.log("fullfilled : ", resultAction.payload);
+      return;
+    }
+    if (addFarm.rejected.match(resultAction)) {
+      console.log("error : ", resultAction.error);
+      return;
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 px-2">
       <div className="flex flex-col gap-2">
         <div className="flex flex-col">
           <span>농장 명</span>
-          <Input name="name" type="text" />
+          <Input
+            name="name"
+            type="text"
+            onChange={(e) => setFarmName(e.target.value)}
+          />
         </div>
 
         <div className="flex flex-col">
           <span>작물명</span>
-          <Input name="name" type="text" />
+          <Input
+            name="name"
+            type="text"
+            onChange={(e) => setCropName(e.target.value)}
+          />
         </div>
       </div>
-      <Button>저장</Button>
+      <Button onClick={handleClick}>저장</Button>
     </div>
   );
 };

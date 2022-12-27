@@ -1,7 +1,10 @@
 import { combineReducers } from "redux";
 import { HYDRATE } from "next-redux-wrapper";
+import userSlice from "./userSlice";
 
-const combinedReducer = combineReducers({});
+const combinedReducer = combineReducers({
+  user: userSlice,
+});
 
 const rootReducer: typeof combinedReducer = (state, action) => {
   if (action.type === HYDRATE) {

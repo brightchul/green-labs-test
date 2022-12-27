@@ -1,4 +1,7 @@
-import React from "react";
+import { useAppDispatch, useAppSelector } from "hooks";
+import React, { useEffect } from "react";
+import { fetchFarmList, selectFarmData } from "stores/farmSlice";
+
 // import type { ProductionType, FarmsType } from "libs/type";
 
 const Farm = () => {
@@ -12,6 +15,14 @@ const Farm = () => {
   - 랜더링 된 컴포넌트에서 하우스를 동작시키는 함수를 작성해 주세요 역시 예시 이미지를 확인 하세요.
   */
 
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchFarmList());
+  }, []);
+
+  const farmData = useAppSelector(selectFarmData);
+  // eslint-disable-next-line no-console
+  console.log(farmData);
   return <div className="px-2 flex flex-col gap-2"></div>;
 };
 

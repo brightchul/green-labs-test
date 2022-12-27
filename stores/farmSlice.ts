@@ -34,6 +34,25 @@ export const fetchFarmList = createAsyncThunk<FetchFarmListResponse>(
   }
 );
 
+interface AddFarmProps {
+  farmName: string;
+  cropName: string;
+}
+
+export const addFarm = createAsyncThunk(
+  "farm/addFarm",
+  async function ({ farmName, cropName }: AddFarmProps) {
+    const response = await fetch(`/api/addfarm`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ farmName, cropName }),
+    });
+    return await response.json();
+  }
+);
+
 export const farmSlice = createSlice({
   name: "farm",
   initialState,

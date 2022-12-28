@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Input, Button } from "components";
+
+import { Button, Input } from "components";
+import { useAppDispatch, useToggle } from "hooks";
 import { addFarm } from "stores/farmSlice";
-import { useAppDispatch } from "hooks";
+import FarmAddModal from "./FarmAddModal";
 
 const FarmAddForm = () => {
   /*TODO: Q2-2 API 통신 (Farm 의 문제를 다 끝내고 진행하셔도 무방합니다.)
@@ -17,23 +19,35 @@ const FarmAddForm = () => {
     - 각 모달에는 닫기 버튼을 추가하여 모달이 수동으로 닫혀야 합니다.
   */
 
-  const [farmName, setFarmName] = useState("");
+  const [isSuccess, setSuccess] = useState(false);
   const [cropName, setCropName] = useState("");
+  const [farmName, setFarmName] = useState("");
 
   const dispatch = useAppDispatch();
 
   const handleClick = async () => {
+    if (!(farmName && cropName)) {
+      setSuccess(false);
+      toggleOpenModal();
+      return;
+    }
+
     const resultAction = await dispatch(addFarm({ farmName, cropName }));
 
     if (addFarm.fulfilled.match(resultAction)) {
-      console.log("fullfilled : ", resultAction.payload);
+      setSuccess(true);
+      toggleOpenModal();
       return;
     }
+
     if (addFarm.rejected.match(resultAction)) {
-      console.log("error : ", resultAction.error);
+      setSuccess(false);
+      toggleOpenModal();
       return;
     }
   };
+
+  const [isOpenModal, toggleOpenModal] = useToggle(false);
 
   return (
     <div className="flex flex-col gap-4 px-2">
@@ -56,6 +70,14 @@ const FarmAddForm = () => {
           />
         </div>
       </div>
+      {isOpenModal && (
+        <FarmAddModal
+          cropName={cropName}
+          farmName={farmName}
+          isSuccess={isSuccess}
+          handleClick={toggleOpenModal}
+        />
+      )}
       <Button onClick={handleClick}>저장</Button>
     </div>
   );

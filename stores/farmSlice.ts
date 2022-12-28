@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { RootState } from "./";
+import { RootState } from ".";
 
 interface Farm {
   id: number;
@@ -56,7 +56,16 @@ export const addFarm = createAsyncThunk(
 export const farmSlice = createSlice({
   name: "farm",
   initialState,
-  reducers: {},
+  reducers: {
+    toggleHouse: (state, action) => {
+      const { farmId, houseId } = action.payload;
+      const farm = state.data.find((farm) => farm.id === farmId);
+      const house = farm?.houses?.find((house) => house.id === houseId);
+
+      if (!house) return;
+      house.active = !house.active;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchFarmList.pending, (state) => {
       state.loading = "pending";
@@ -78,5 +87,7 @@ export const selectFarmLoading = (state: RootState) => state.farm.loading;
 
 export const selectFarmData = (state: RootState) =>
   selectFarmDomain(state).data;
+
+export const { toggleHouse } = farmSlice.actions;
 
 export default farmSlice.reducer;

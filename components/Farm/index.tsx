@@ -1,8 +1,17 @@
-import { useAppDispatch, useAppSelector } from "hooks";
-import React, { useEffect } from "react";
-import { fetchFarmList, selectFarmData } from "stores/farmSlice";
+import React, { useEffect, useMemo } from "react";
 
-// import type { ProductionType, FarmsType } from "libs/type";
+import { useAppDispatch, useAppSelector } from "hooks";
+import { FarmsType } from "libs/type";
+import { fetchFarmList, selectFarmData, toggleHouse } from "stores/farmSlice";
+import FarmList from "./FarmList";
+
+function sumAnnualProduction(farm: FarmsType) {
+  let productionTotal = 0;
+  farm.annualProduction.forEach(
+    ({ Production }) => (productionTotal += Production)
+  );
+  return productionTotal;
+}
 
 const Farm = () => {
   /* TODO: Q2-1 api 통신
@@ -16,14 +25,29 @@ const Farm = () => {
   */
 
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(fetchFarmList());
   }, []);
 
   const farmData = useAppSelector(selectFarmData);
-  // eslint-disable-next-line no-console
-  console.log(farmData);
-  return <div className="px-2 flex flex-col gap-2"></div>;
+
+  const farmList = useMemo(() => {
+    return farmData.map((farm) => ({
+      ...farm,
+      productionTotal: sumAnnualProduction(farm),
+      HouseActive: (farmId: number, houseId: number) => {
+        dispatch(toggleHouse({ farmId, houseId }));
+      },
+    }));
+  }, [farmData]);
+
+  return (
+    <div className="px-2 flex flex-col gap-2">
+      {farmData.length > 0 &&
+        farmList.map((farm) => <FarmList key={farm.id} {...farm} />)}
+    </div>
+  );
 };
 
 export default Farm;

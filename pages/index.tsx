@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 import { setUserData } from "../stores/userSlice";
-import { Button, Container, Input, ScreenWrap } from "components";
-import { useAppDispatch } from "hooks";
+import { Button, Container, Input, ScreenWrap, SimpleModal } from "components";
+import { useAppDispatch, useToggle } from "hooks";
 
 //TODO: Q1-1 로그인 상태 관리
 // 상태관리 라이브러리 (context, redux, recoil 등) 을 활용해서 로그인 상태를 관리하는 기능을 개발 해주세요
@@ -17,7 +17,18 @@ const Login = () => {
   const [name, setName] = useState("");
   const [id, setId] = useState("");
 
+  const [isOpenModal, toggleOpenModal] = useToggle(false);
+  const [modalInfo, setModalInfo] = useState({ title: "", content: "" });
+
   const handleClick = () => {
+    if (!(name.trim() && id.trim())) {
+      setModalInfo({
+        title: "로그인 실패!",
+        content: "이름, 아이디 입력이 제대로 되지 않았습니다.",
+      });
+      toggleOpenModal();
+      return;
+    }
     dispatch(setUserData({ name, id }));
     router.push("home");
   };
@@ -39,6 +50,9 @@ const Login = () => {
             placeholder="이름을 입력하세요"
             onChange={(e) => setName(e.target.value)}
           />
+          {isOpenModal && (
+            <SimpleModal {...modalInfo} handleClick={toggleOpenModal} />
+          )}
           <Button onClick={handleClick}>로그인</Button>
         </div>
       </ScreenWrap>

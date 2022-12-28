@@ -8,3 +8,4 @@ export { default as Farm } from "./Farm";
 export { default as Title } from "./Title";
 export { default as FarmAddForm } from "./FarmAddForm";
 export { default as Portal } from "./Portal";
+export { default as SimpleModal } from "./SimpleModal";

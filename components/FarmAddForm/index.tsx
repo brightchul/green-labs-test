@@ -19,19 +19,30 @@ const FarmAddForm = () => {
     - 각 모달에는 닫기 버튼을 추가하여 모달이 수동으로 닫혀야 합니다.
   */
 
+  const [isSuccess, setSuccess] = useState(false);
   const [cropName, setCropName] = useState("");
   const [farmName, setFarmName] = useState("");
 
   const dispatch = useAppDispatch();
 
   const handleClick = async () => {
-    const resultAction = await dispatch(addFarm({ farmName, cropName }));
-
-    if (addFarm.fulfilled.match(resultAction)) {
+    if (!(farmName && cropName)) {
+      setSuccess(false);
       toggleOpenModal();
       return;
     }
+
+    const resultAction = await dispatch(addFarm({ farmName, cropName }));
+
+    if (addFarm.fulfilled.match(resultAction)) {
+      setSuccess(true);
+      toggleOpenModal();
+      return;
+    }
+
     if (addFarm.rejected.match(resultAction)) {
+      setSuccess(false);
+      toggleOpenModal();
       return;
     }
   };
@@ -63,6 +74,7 @@ const FarmAddForm = () => {
         <FarmAddModal
           cropName={cropName}
           farmName={farmName}
+          isSuccess={isSuccess}
           handleClick={toggleOpenModal}
         />
       )}

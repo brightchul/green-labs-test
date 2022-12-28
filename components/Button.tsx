@@ -1,6 +1,6 @@
 import React from "react";
 import { ReactNode } from "react";
-const Login = ({
+const Button = ({
   onClick,
   children,
 }: {
@@ -16,4 +16,4 @@ const Login = ({
   </button>
 );
 
-export default Login;
+export default Button;
